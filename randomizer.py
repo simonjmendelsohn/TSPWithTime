@@ -19,7 +19,7 @@ def distance(position_1, position_2):
 
 def main():
 
-	num_tasks = 100 #Change this number for a different number of tasks
+	num_tasks = 30 #Change this number for a different number of tasks
 
 	#Change the numbers in percent to get lists of tasks with different percentages of them appointments.
 	percent = {

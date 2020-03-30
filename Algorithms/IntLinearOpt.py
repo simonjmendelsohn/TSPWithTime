@@ -6,6 +6,7 @@ import sys
 import math
 import time
 from termcolor import colored
+import ast
 
 """
 This code was based on the code from google OR tools found at https://developers.google.com/optimization/mip/integer_opt
@@ -38,7 +39,9 @@ def printMap(variable_list, locations, times, horizon):
 
     newlocs = []
     while (min(values) < 100000):
+      #print(values)
       val, index = min((val, idx) for (idx, val) in enumerate(values))
+      #print(index)
       #index = min(enumerate(values), key=itemgetter(1))[0] 
       values[index] = 10000000000
       newlocs.append((locations[index], val))
@@ -69,39 +72,29 @@ def main():
 
   time_window_end = 9000 #The latest time for any appointments
   horizon = 10401        #The time by which all tasks must be done
-  num_tasks = 100        #The number of tasks.
-  timed = True          #If true some randomly generated times for tasks will be assigned
-  data = 'manual'        #If true tasks and time windows must be given manually rather than randomly constructed.
+  num_tasks = 30        #The number of tasks.
+  timed = False          #If true some randomly generated times for tasks will be assigned
+  data = "manual"
+  if len(sys.argv) > 2 and sys.argv[1] == "file":
+  	data = 'file'        #If manual tasks and time windows must be given manually rather than randomly constructed or taken from file.
   M = 1000000           #Can be any sufficiently large integer for the linear opt algorithm to work.
 
   if data == 'manual':
     #The first and last locations must be the same and are the starting location of the vehicle.  They do not count as tasks.
-    locations = [(36, 23), (13, 5), (1, 31), (27, 25), (43, 19), (40, 21), (12, 0), (28, 49), (36, 38), (49, 26), (40, 41), (44, 27), (23, 7), (45, 6), (0, 10), (11, 35), (30, 3), (34, 8), (25, 20), (39, 34), (3, 49), (5, 43), (33, 21), (10, 39), (31, 27), (0, 36), (11, 38), (15, 19), (11, 13), (21, 24), (38, 22), (5, 33), (36, 10), (41, 29), (22, 25), (37, 39), (33, 31), (15, 30), (28, 32), (21, 4), (24, 10), (11, 46), (33, 8), (6, 22), (17, 34), (11, 27), (19, 9), (10, 20), (12, 36), (28, 35), (16, 47), (34, 10), (41, 46), (4, 13), (24, 41), (46, 2), (7, 49), (32, 40), (18, 10), (22, 8), (22, 42), (13, 14), (26, 1), (33, 10), (47, 22), (48, 2), (44, 26), (49, 6), (25, 33), (38, 35), (46, 17), (31, 28), (36, 20), (38, 37), (4, 11), (42, 23), (25, 25), (30, 12), (8, 38), (27, 22), (41, 9), (23, 5), (9, 31), (14, 29), (15, 36), (43, 42), (38, 28), (27, 18), (21, 37), (7, 37), (34, 31), (23, 42), (25, 14), (7, 1), (27, 39), (25, 37), (44, 15), (13, 35), (2, 3), (17, 9), (36, 23)]
+    locations = [(34, 32), (31, 10), (37, 5), (8, 33), (3, 31), (2, 49), (12, 4), (13, 49), (11, 49), (4, 12), (32, 15), (32, 24), (19, 0), (24, 36), (3, 44), (4, 6), (3, 3), (48, 22), (15, 19), (44, 24), (39, 6), (8, 41), (1, 18), (20, 19), (43, 32), (47, 24), (46, 31), (13, 2), (31, 22), (17, 11), (34, 32)]
     num_tasks = len(locations) - 2
     time_windows = [(0, horizon)]*(num_tasks+2)
-    time_windows = [(0, 0), (41, 42), (79, 80), (111, 112), (133, 134), (138, 139), (187, 188), (252, 253), (271, 272), (296, 297), (320, 321), (338, 339), (379, 380), (402, 403), (451, 452), (487, 488), (538, 539), (547, 548), (568, 569), (596, 597), (647, 648), (655, 656), (705, 706), (746, 747), (779, 780), (819, 820), (832, 833), (855, 856), (865, 866), (886, 887), (905, 906), (949, 950), (1003, 1004), (1027, 1028), (1050, 1051), (1079, 1080), (1091, 1092), (1110, 1111), (1125, 1126), (1160, 1161), (1169, 1170), (1218, 1219), (1278, 1279), (1319, 1320), (1342, 1343), (1355, 1356), (1381, 1382), (1401, 1402), (1419, 1420), (1436, 1437), (1460, 1461), (1515, 1516), (1558, 1559), (1628, 1629), (1676, 1677), (1737, 1738), (1823, 1824), (1857, 1858), (1901, 1902), (1907, 1908), (1941, 1942), (1978, 1979), (2004, 2005), (2020, 2021), (2046, 2047), (2067, 2068), (2095, 2096), (2120, 2121), (2171, 2172), (2186, 2187), (2212, 2213), (2238, 2239), (2251, 2252), (2270, 2271), (2330, 2331), (2380, 2381), (2399, 2400), (2417, 2418), (2465, 2466), (2500, 2501), (2527, 2528), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000)]
+    time_windows = [(0, 0), (25, 26), (36, 37), (93, 94), (100, 101), (119, 120), (174, 175), (220, 221), (222, 223), (266, 267), (297, 298), (306, 307), (343, 344), (384, 385), (413, 414), (452, 453), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000), (0, 10000)]
 
     demands = [0]*(num_tasks+2)
 
   elif data == 'file':
-    filename = "DaSilvaUrrutia/n200w100.001.txt"
+    filename = sys.argv[2]
     file = open(filename, 'r')
-    length = 202
-    l = 0
-    locations = [(0, 0)] * length
-    time_windows = [(0, 0)] * length
-    for line in file:
-      values = line.split()
-      if l > 0:
-        locations[l-1] = (int(values[1][0:-3]), int(values[2][0:-3]))
-        time_windows[l-1] = (int(values[4][0:-3]), int(values[5][0:-3]))
-      l += 1
-    locations[201] = locations[0]
-    time_windows[0] = (0, horizon)
-    time_windows[201] = (0, horizon)
+    locations = ast.literal_eval(file.readline())
+    time_windows = ast.literal_eval(file.readline())
     num_tasks = len(locations) - 2
     demands = [0]*(num_tasks+2)
-
   else:
     #Randomly generate locations
     locations = []

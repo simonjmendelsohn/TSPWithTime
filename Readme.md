@@ -47,7 +47,7 @@ for example.
 
 ## Authors
 
-Simon Mendelsohn and Alex Mendelsohn.  Please email at simonjmendelsohn@gmail.com or alexjmendelsohn@gmail.com with any questions.
+Simon Mendelsohn and Alex Mendelsohn.
 
 ## Acknowledgments
 
